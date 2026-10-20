@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estação Meteorológica Remota</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    h1 { margin-bottom: 24px; color: #38bdf8; text-align: center; font-size: 1.8rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; width: 100%; max-width: 900px; }
+    .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 4px 12px rgba(0,0,0,0.3); text-align: center; }
+    .card .title { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card .value { font-size: 2.2rem; font-weight: bold; margin: 10px 0; color: #f1f5f9; }
+    .card .unit { font-size: 1rem; color: #38bdf8; margin-left: 4px; }
+    .highlight { color: #4ade80 !important; }
+    .temp-card .value { color: #f87171; }
+    .umid-card .value { color: #60a5fa; }
+    .press-card .value { color: #fbbf24; }
+    .orv-card .value { color: #38bdf8; }
+    .rain-card .value { color: #38bdf8; }
+    .footer { margin-top: 24px; font-size: 0.85rem; color: #64748b; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Estação Meteorológica Online</h1>
+  <div class="grid">
+    <div class="card">
+      <div class="title">Velocidade do Vento</div>
+      <div class="value highlight"><span id="v_kmh">0.0</span><span class="unit">km/h</span></div>
+    </div>
+    <div class="card temp-card">
+      <div class="title">Temperatura</div>
+      <div class="value"><span id="temp">--</span><span class="unit">°C</span></div>
+    </div>
+    <div class="card umid-card">
+      <div class="title">Umidade Relativa</div>
+      <div class="value"><span id="umid">--</span><span class="unit">%</span></div>
+    </div>
+    <div class="card orv-card">
+      <div class="title">Ponto de Orvalho</div>
+      <div class="value"><span id="orv">--</span><span class="unit">°C</span></div>
+    </div>
+    <div class="card press-card">
+      <div class="title">Pressão Barométrica</div>
+      <div class="value"><span id="press">--</span><span class="unit">hPa</span></div>
+    </div>
+    <div class="card rain-card">
+      <div class="title">Chuva (Última 1h)</div>
+      <div class="value"><span id="chuva_1h">0.0</span><span class="unit">mm</span></div>
+    </div>
+    <div class="card rain-card">
+      <div class="title">Chuva (Últimas 24h)</div>
+      <div class="value"><span id="chuva_24h">0.0</span><span class="unit">mm</span></div>
+    </div>
+  </div>
+  <div class="footer">Última atualização na nuvem: <span id="atualizacao">--</span></div>
+
+  <script>
+    // Cole aqui a URL do seu Google Apps Script Web App
+    const APPS_SCRIPT_URL = "SUA_URL_DO_APPS_SCRIPT_AQUI";
+
+    async function atualizarSiteRemoto() {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL);
+        const d = await res.json();
+        
+        document.getElementById('v_kmh').innerText = Number(d.v_kmh).toFixed(1);
+        document.getElementById('temp').innerText = Number(d.temp).toFixed(1);
+        document.getElementById('umid').innerText = Number(d.umid).toFixed(1);
+        // Se quiser calcular o orvalho no JS do site ou puxar direto:
+        document.getElementById('press').innerText = Number(d.press).toFixed(1);
+        document.getElementById('chuva_1h').innerText = Number(d.chuva_1h).toFixed(1);
+        document.getElementById('chuva_24h').innerText = Number(d.chuva_24h).toFixed(1);
+        document.getElementById('atualizacao').innerText = new Date(d.dataHora).toLocaleTimeString();
+      } catch (e) {
+        console.error("Erro ao buscar dados remotos:", e);
+      }
+    }
+    
+    // Atualiza a cada 1 minuto no site remoto
+    setInterval(atualizarSiteRemoto, 60000);
+    atualizarSiteRemoto();
+  </script>
+</body>
+</html>
