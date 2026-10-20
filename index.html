@@ -18,6 +18,9 @@
     .umid-card .value { color: #60a5fa; }
     .press-card .value { color: #fbbf24; }
     .orv-card .value { color: #38bdf8; }
+    .raj-card .value { color: #facc15; }
+    .dir-card .value { color: #a855f7; }
+    .rad-card .value { color: #fb923c; }
     .rain-card .value { color: #38bdf8; }
     .footer { margin-top: 24px; font-size: 0.85rem; color: #64748b; text-align: center; }
   </style>
@@ -28,6 +31,18 @@
     <div class="card">
       <div class="title">Velocidade do Vento</div>
       <div class="value highlight"><span id="v_kmh">0.0</span><span class="unit">km/h</span></div>
+    </div>
+    <div class="card raj-card">
+      <div class="title">Rajada Máxima</div>
+      <div class="value"><span id="v_raj">0.0</span><span class="unit">km/h</span></div>
+    </div>
+    <div class="card dir-card">
+      <div class="title">Direção do Vento</div>
+      <div class="value"><span id="v_dir">0</span><span class="unit">°</span></div>
+    </div>
+    <div class="card rad-card">
+      <div class="title">Irradiação Global</div>
+      <div class="value"><span id="rad">0.0</span><span class="unit">W/m²</span></div>
     </div>
     <div class="card temp-card">
       <div class="title">Temperatura</div>
@@ -57,8 +72,7 @@
   <div class="footer">Última atualização na nuvem: <span id="atualizacao">--</span></div>
 
   <script>
-    // Cole aqui a URL do seu Google Apps Script Web App
-    const APPS_SCRIPT_URL = "SUA_URL_DO_APPS_SCRIPT_AQUI";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzo1wWF2DiAmE5nkgp2WfYXUnTD4k5-tw1h-X_o7V-OgpABnbduOlV7kPqOxt-41-vR/exec";
 
     async function atualizarSiteRemoto() {
       try {
@@ -66,9 +80,12 @@
         const d = await res.json();
         
         document.getElementById('v_kmh').innerText = Number(d.v_kmh).toFixed(1);
+        document.getElementById('v_raj').innerText = Number(d.v_raj).toFixed(1);
+        document.getElementById('v_dir').innerText = Math.round(d.v_dir);
+        document.getElementById('rad').innerText = Number(d.rad).toFixed(1);
         document.getElementById('temp').innerText = Number(d.temp).toFixed(1);
         document.getElementById('umid').innerText = Number(d.umid).toFixed(1);
-        // Se quiser calcular o orvalho no JS do site ou puxar direto:
+        document.getElementById('orv').innerText = Number(d.orv).toFixed(1);
         document.getElementById('press').innerText = Number(d.press).toFixed(1);
         document.getElementById('chuva_1h').innerText = Number(d.chuva_1h).toFixed(1);
         document.getElementById('chuva_24h').innerText = Number(d.chuva_24h).toFixed(1);
@@ -78,7 +95,6 @@
       }
     }
     
-    // Atualiza a cada 1 minuto no site remoto
     setInterval(atualizarSiteRemoto, 60000);
     atualizarSiteRemoto();
   </script>
